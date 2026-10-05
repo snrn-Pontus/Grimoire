@@ -263,9 +263,23 @@ local function GetPaddleSlot(layer, paddle)
     return slots[(BACKHAND_PANEL[layer] - 1) * 4 + paddle]
 end
 
+-- Backhand creates nativeSlots empty and fills all 16 only once it has
+-- reserved them; until then (or when it keeps a profile on its own saved
+-- actions) the paddles have no action slots to place into.
 local function HasPaddleSlots()
-    return IsAddOnLoaded("Backhand") and type(BackhandCharDB) == "table"
-        and type(BackhandCharDB.nativeSlots) == "table"
+    if not IsAddOnLoaded("Backhand") or type(BackhandCharDB) ~= "table" then
+        return false
+    end
+    local slots = BackhandCharDB.nativeSlots
+    if type(slots) ~= "table" or #slots ~= 16 then
+        return false
+    end
+    for _, slot in ipairs(slots) do
+        if type(slot) ~= "number" then
+            return false
+        end
+    end
+    return true
 end
 Grimoire.HasPaddleSlots = HasPaddleSlots
 
