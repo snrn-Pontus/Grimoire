@@ -2,7 +2,7 @@
 
 One command lays out an Affliction Warlock on **WoW: Forever**'s gamepad crossbar. Dragging thirty-odd spells, items and macros onto four trigger layers with a controller takes a while; `/grimoire apply` does it in one go, and fills the back paddles too when [Backhand](https://github.com/snrn-Pontus/Backhand) is installed.
 
-Grimoire is part of the SNRN addon family, next to [Backhand](https://github.com/snrn-Pontus/Backhand), [Rummage](https://github.com/snrn-Pontus/Rummage) and [Tally](https://github.com/snrn-Pontus/Tally).
+Grimoire is part of the SNRN addon family, next to [Backhand](https://github.com/snrn-Pontus/Backhand), [Rummage](https://github.com/snrn-Pontus/Rummage), [Tally](https://github.com/snrn-Pontus/Tally) and [Valet](https://github.com/snrn-Pontus/Valet).
 
 Built for **World of Warcraft: Forever** (Interface 16001) and its level 30 beta cap. It uses Forever's native crossbar and does nothing useful on other clients.
 

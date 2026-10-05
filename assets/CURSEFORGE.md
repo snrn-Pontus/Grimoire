@@ -6,6 +6,7 @@ Dragging thirty-odd spells, items and macros onto four trigger layers with a con
 
 ## What's new
 
+- **0.2.0**: A settings page (`/grimoire config`) and `/grimoire check`, which lists every slot that differs from the plan. Grimoire now works with or without Backhand and Rummage, using each only while it is loaded. Bane of Agony is no longer skipped, and slots for spells you have not learned yet are cleared instead of keeping an older layout's action.
 - **0.1.0**: First release.
 
 Full history on the Changelog tab of each file.
@@ -83,6 +84,7 @@ Grimoire places actions the way the crossbar's own edit mode does, so the layout
 - **[SNRN Backhand](https://www.curseforge.com/wow/addons/snrn-backhand)**: four extra action slots for your controller's rear paddles, built into Forever's native crossbar. Grimoire fills all sixteen of them.
 - **[SNRN Rummage](https://www.curseforge.com/wow/addons/snrn-rummage)**: one action slot per item type that always uses the best food, drink, potion, bandage or quest item in your bags. Grimoire puts its Smart macros on your bars.
 - **[SNRN Tally](https://www.curseforge.com/wow/addons/snrn-tally-bag-ammo-counter)**: free bag slots and ammo on Forever's gamepad HUD, which shows neither.
+- **[SNRN Valet](https://www.curseforge.com/wow/addons/snrn-valet)**: sells greys and repairs at merchants, collects your mail, and declines duels, guild invites and charters, so there are fewer popups to chase with the gamepad cursor.
 
 ## Reporting problems
 
