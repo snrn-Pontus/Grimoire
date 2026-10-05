@@ -325,10 +325,61 @@ local function Apply()
     end
 end
 
+local function GetSpellNameByID(spellID)
+    if C_Spell and C_Spell.GetSpellName then
+        return C_Spell.GetSpellName(spellID)
+    end
+    return GetSpellInfo and (GetSpellInfo(spellID))
+end
+
+-- What a slot holds, as text, and whether it is the planned action.
+local function DescribeSlot(slot, action)
+    local actionType, id = GetActionInfo(slot)
+    if not actionType then
+        return "empty", false
+    elseif actionType == "spell" then
+        local name = GetSpellNameByID(id) or ("spell " .. tostring(id))
+        return name, action.kind == "spell" and tContains(action.names, name)
+    elseif actionType == "macro" then
+        local name = GetActionText(slot) or (GetMacroInfo(id)) or ("macro " .. tostring(id))
+        return "macro " .. name, action.kind == "macro" and name == action.name
+    elseif actionType == "item" then
+        local name = (C_Item and C_Item.GetItemNameByID and C_Item.GetItemNameByID(id)) or ("item " .. tostring(id))
+        return name, action.kind == "item" and id == action.itemID
+    end
+    return actionType .. " " .. tostring(id), false
+end
+
+local function Check()
+    local matched, problems = 0, {}
+    ForEachEntry(function(layer, label, slot, action)
+        local where = LAYER_LABEL[layer] .. " " .. label
+        if not slot then
+            problems[#problems + 1] = where .. ": no slot"
+            return
+        end
+        local holds, ok = DescribeSlot(slot, action)
+        if ok then
+            matched = matched + 1
+        else
+            problems[#problems + 1] = string.format("%s: planned %s, has %s", where, Describe(action), holds)
+        end
+    end)
+
+    Print("%d slots match the plan.", matched)
+    for _, line in ipairs(problems) do
+        print("  " .. line)
+    end
+    if #problems > 0 then
+        Print("Spells you have not learned yet show up here too; /grimoire apply fills them once you have them.")
+    end
+end
+
 local function PrintHelp()
     Print("Commands:")
     print("  /grimoire          show the planned layout")
     print("  /grimoire apply    place it on the crossbar and paddles")
+    print("  /grimoire check    compare every slot with the plan")
     print("  /grimoire help     this list")
 end
 
@@ -338,6 +389,8 @@ SlashCmdList.GRIMOIRE = function(msg)
     msg = (msg or ""):lower():match("^%s*(.-)%s*$")
     if msg == "apply" then
         Apply()
+    elseif msg == "check" then
+        Check()
     elseif msg == "help" then
         PrintHelp()
     else

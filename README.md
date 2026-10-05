@@ -32,7 +32,8 @@ The idea: the base layer and its paddles hold the leveling loop (Corruption, Ban
 1. Log in on your Warlock in gamepad mode, out of combat.
 2. `/grimoire` prints the planned layout in chat, with the action slot of each button.
 3. `/grimoire apply` places it. Whatever was in those slots is replaced; nothing else is touched.
-4. Spells you have not learned yet, and pet abilities, are listed as skipped. Run `/grimoire apply` again after leveling or learning a new demon. Slots with two spells take the first one you know, so they upgrade themselves.
+4. `/grimoire check` compares every slot with the plan and lists the ones that differ.
+5. Spells you have not learned yet, and pet abilities, are listed as skipped. Run `/grimoire apply` again after leveling or learning a new demon. Slots with two spells take the first one you know, so they upgrade themselves.
 
 ## Macros
 
@@ -61,6 +62,7 @@ Grimoire places actions the way the native crossbar's own edit mode does: it ask
 ```
 /grimoire          show the planned layout
 /grimoire apply    place it on the crossbar and paddles
+/grimoire check    compare every slot with the plan and list differences
 /grimoire help     list the commands
 ```
 
