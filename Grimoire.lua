@@ -80,7 +80,7 @@ local LAYOUT = {
             DR = S("Fear"),
             DD = S("Shoot"),
         },
-        paddles = { M("WL Corruption"), S("Curse of Agony"), S("Drain Life"), S("Life Tap") },
+        paddles = { M("WL Corruption"), S("Bane of Agony", "Curse of Agony"), S("Drain Life"), S("Life Tap") },
     },
     lt = {
         buttons = {

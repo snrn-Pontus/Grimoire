@@ -13,7 +13,7 @@ Shown for an Xbox controller: X is the left face button, Y the top, B the right,
 | | **Base** | **LT** | **RT** | **LT + RT** |
 |---|---|---|---|---|
 | **P1** | Corruption + pet attack | Healthstone | Pet's 2nd ability | Hellfire |
-| **P2** | Curse of Agony | SmartHealthPotion | Seduction / Spell Lock | Hearthstone |
+| **P2** | Bane of Agony | SmartHealthPotion | Seduction / Spell Lock | Hearthstone |
 | **P3** | Drain Life | Torment | Pet Passive | SmartDrink |
 | **P4** | Life Tap | Sacrifice | Curse of Recklessness | Use Soulstone |
 | **D-Up** | Drain Soul | Pet Attack | Unending Breath | SmartBandage |
@@ -25,7 +25,7 @@ Shown for an Xbox controller: X is the left face button, Y the top, B the right,
 | **B** | *(client)* | Curse of Weakness | Summon Succubus | Ritual of Summoning |
 | **A** | *(client: jump)* | Immolate | Demon Armor, Demon Skin until then | Banish |
 
-The idea: the base layer and its paddles hold the leveling loop (Corruption, Curse of Agony, Drain Life or the wand, Drain Soul on low mobs, Life Tap between pulls), LT is survival, RT is the pet and LT + RT is everything you do out of combat. Shadow Bolt stays on the base layer for Nightfall procs.
+The idea: the base layer and its paddles hold the leveling loop (Corruption, Bane of Agony, Drain Life or the wand, Drain Soul on low mobs, Life Tap between pulls), LT is survival, RT is the pet and LT + RT is everything you do out of combat. Shadow Bolt stays on the base layer for Nightfall procs.
 
 ## Usage
 

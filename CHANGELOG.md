@@ -1,5 +1,9 @@
 # Grimoire changelog
 
+## Unreleased
+
+- Fixed: the Agony DoT on base P2 was skipped. Forever calls it Bane of Agony; Grimoire now looks for that name first and falls back to Curse of Agony.
+
 ## 0.1.0 — First release
 
 Grimoire is part of the SNRN addon family.
