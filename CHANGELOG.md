@@ -1,13 +1,14 @@
 # Grimoire changelog
 
-## Unreleased
+## 0.2.0 — Settings and check
 
-- Without Rummage loaded, its seven Smart macro slots are left as they are instead of being cleared, and stale Smart macros from an uninstalled Rummage are never placed. Apply, check and the plan say once how many slots were left out.
-- Settings page under Settings > AddOns > Grimoire (or `/grimoire config`): buttons to show, apply and check the layout, and options to skip Backhand's paddles, leave slots for unlearned spells alone, keep your own edits to the WL macros, and apply the layout again automatically after learning a spell.
-- Fixed: a slot whose planned spell is not learned yet kept the action an older layout had there, so the layout could show stray duplicates (Bane of Agony on RT P4). Such slots are now cleared and filled once the spell is learned.
+- **Settings page.** Settings > AddOns > Grimoire, or `/grimoire config`: buttons to show, apply and check the layout, and options to skip Backhand's paddles, leave slots for unlearned spells alone, keep your own edits to the WL macros, and apply the layout again automatically after learning a spell. With a controller, use the mouse on the page, as in the other SNRN addons.
+- **`/grimoire check`** compares every crossbar and paddle slot with the plan and lists the slots that hold something else or are empty.
+- **Works with or without the other SNRN addons.** Backhand adds the paddles and Rummage the consumable slots, each only while it is loaded. Without Rummage its seven Smart macro slots are left as they are instead of being cleared, and stale Smart macros from an uninstalled Rummage are never placed. The plan, apply and check say once how many slots were left out.
 - RT P4 tries Curse of Tongues, Curse of Exhaustion and Drain Mana when Curse of Recklessness is not known.
-- `/grimoire check` compares every crossbar and paddle slot with the plan and lists the slots that hold something else or are empty.
 - Fixed: the Agony DoT on base P2 was skipped. Forever calls it Bane of Agony; Grimoire now looks for that name first and falls back to Curse of Agony.
+- Fixed: a slot whose planned spell is not learned yet kept the action an older layout had there, so the layout could show stray duplicates (Bane of Agony on RT P4). Such slots are now cleared and filled once the spell is learned.
+- Fixed: with Backhand loaded but no paddle slots reserved on the character yet, apply listed all 16 paddles as invalid slots. It now fills the crossbar and says Backhand has no paddle slots yet.
 
 ## 0.1.0 — First release
 
