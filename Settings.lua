@@ -63,22 +63,19 @@ local function CreateHeader(parent, text, y)
     return y - 32
 end
 
-local function HasMacro(name)
-    local index = GetMacroIndexByName(name)
-    return index and index > 0
-end
-
 local function StatusText()
     local paddles
-    if not Grimoire.HasPaddleSlots() then
-        paddles = "Backhand paddle slots not found, only the crossbar is filled."
+    if not Grimoire.IsAddOnLoaded("Backhand") then
+        paddles = "Backhand not loaded, only the crossbar is filled."
+    elseif not Grimoire.HasPaddleSlots() then
+        paddles = "Backhand has no paddle slots on this character yet, only the crossbar is filled."
     elseif GrimoireDB.fillPaddles then
         paddles = "Backhand paddle slots found."
     else
         paddles = "Backhand paddle slots found, but turned off below."
     end
-    local smart = HasMacro("SmartFood") and "Rummage Smart macros found."
-        or "Rummage Smart macros not found, those slots are skipped."
+    local smart = Grimoire.IsAddOnLoaded("Rummage") and "Rummage loaded, its Smart macros fill the consumable slots."
+        or "Rummage not loaded, the consumable slots are left as they are."
     return paddles .. "\n" .. smart
 end
 

@@ -64,7 +64,11 @@ Grimoire creates ten per-character macros, all starting with `WL`, and updates t
 
 Each macro has a fixed icon from its spell or item, so a pet macro does not turn into a question mark while that pet is not summoned. Grimoire needs ten free character macro slots the first time; it stops and says so if there are not enough.
 
-The food, drink, potion, bandage, flask and quest item slots use [Rummage](https://github.com/snrn-Pontus/Rummage)'s Smart macros. Without Rummage those slots are skipped.
+The food, drink, potion, bandage, flask and quest item slots use [Rummage](https://github.com/snrn-Pontus/Rummage)'s Smart macros. Without Rummage loaded, those seven slots are left exactly as they are, so you can put your own consumables there; old Smart macros left over from an uninstalled Rummage are never placed.
+
+## With or without the other SNRN addons
+
+Grimoire works on its own and fills the crossbar. Backhand adds the paddles and Rummage the consumable slots; each is used only while it is loaded, and the settings page shows which ones were found.
 
 ## How it works
 
