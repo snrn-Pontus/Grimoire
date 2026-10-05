@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fixed: a slot whose planned spell is not learned yet kept the action an older layout had there, so the layout could show stray duplicates (Bane of Agony on RT P4). Such slots are now cleared and filled once the spell is learned.
+- RT P4 tries Curse of Tongues, Curse of Exhaustion and Drain Mana when Curse of Recklessness is not known.
 - `/grimoire check` compares every crossbar and paddle slot with the plan and lists the slots that hold something else or are empty.
 - Fixed: the Agony DoT on base P2 was skipped. Forever calls it Bane of Agony; Grimoire now looks for that name first and falls back to Curse of Agony.
 

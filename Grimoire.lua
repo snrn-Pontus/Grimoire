@@ -108,7 +108,9 @@ local LAYOUT = {
             DR = S("Sense Demons"),
             DD = M("SmartQuestItem"),
         },
-        paddles = { M("WL PetAbility"), M("WL PetCC"), M("WL PetPassive"), S("Curse of Recklessness") },
+        paddles = { M("WL PetAbility"), M("WL PetCC"), M("WL PetPassive"),
+            -- Forever renames or moves some curses; the first one known wins.
+            S("Curse of Recklessness", "Curse of Tongues", "Curse of Exhaustion", "Drain Mana") },
     },
     both = {
         buttons = {
@@ -312,6 +314,13 @@ local function Apply()
         if ok then
             placed = placed + 1
         else
+            -- Clear the slot so an action from an older layout does not stay
+            -- behind looking like part of this one.
+            if C_ActionBar.HasAction(slot) then
+                PickupAction(slot)
+                ClearCursor()
+                reason = reason .. ", old action cleared"
+            end
             skipped[#skipped + 1] = where .. " (" .. Describe(action) .. "): " .. reason
         end
     end)
