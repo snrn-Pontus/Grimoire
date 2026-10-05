@@ -1,0 +1,13 @@
+## Interface: 16001
+## Title: |cff33ccffSNRN|r Grimoire
+## Notes: One command lays out an Affliction Warlock (levels 1-30) on WoW: Forever's gamepad crossbar and Backhand's paddles.
+## Author: SillyNameRandomNumber
+## Version: 0.1.0
+## X-License: MIT
+## X-Website: https://github.com/snrn-Pontus/Grimoire
+## X-Category: Action Bars
+## Category: SNRN
+## Group: SNRN
+## OptionalDeps: Backhand, Rummage
+
+Grimoire.lua
