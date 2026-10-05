@@ -15,7 +15,7 @@ Shown for an Xbox controller: X is the left face button, Y the top, B the right,
 | **P1** | Corruption + pet attack | Healthstone | Pet's 2nd ability | Hellfire |
 | **P2** | Bane of Agony | SmartHealthPotion | Seduction / Spell Lock | Hearthstone |
 | **P3** | Drain Life | Torment | Pet Passive | SmartDrink |
-| **P4** | Life Tap | Sacrifice | Curse of Recklessness | Use Soulstone |
+| **P4** | Life Tap | Sacrifice | Curse of Recklessness, or Tongues, Exhaustion or Drain Mana | Use Soulstone |
 | **D-Up** | Drain Soul | Pet Attack | Unending Breath | SmartBandage |
 | **D-Right** | Fear | Rain of Fire | Sense Demons | Enslave Demon |
 | **D-Down** | Shoot (wand) | Pet Follow | SmartQuestItem | SmartFood |
