@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Without Rummage loaded, its seven Smart macro slots are left as they are instead of being cleared, and stale Smart macros from an uninstalled Rummage are never placed. Apply, check and the plan say once how many slots were left out.
 - Settings page under Settings > AddOns > Grimoire (or `/grimoire config`): buttons to show, apply and check the layout, and options to skip Backhand's paddles, leave slots for unlearned spells alone, keep your own edits to the WL macros, and apply the layout again automatically after learning a spell.
 - Fixed: a slot whose planned spell is not learned yet kept the action an older layout had there, so the layout could show stray duplicates (Bane of Agony on RT P4). Such slots are now cleared and filled once the spell is learned.
 - RT P4 tries Curse of Tongues, Curse of Exhaustion and Drain Mana when Curse of Recklessness is not known.

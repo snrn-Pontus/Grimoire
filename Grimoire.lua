@@ -100,8 +100,10 @@ local function ResolveIcon(name)
 end
 
 -- kind: spell (list of candidate names, first known wins), macro, item.
+-- R is one of Rummage's Smart macros: only placed while Rummage is loaded.
 local function S(...) return { kind = "spell", names = { ... } } end
 local function M(name) return { kind = "macro", name = name } end
+local function R(name) return { kind = "macro", name = name, addon = "Rummage" } end
 local function I(itemID, label) return { kind = "item", itemID = itemID, label = label } end
 
 local LAYOUT = {
@@ -123,10 +125,10 @@ local LAYOUT = {
             A = S("Immolate"),
             DU = M("WL PetAttack"),
             DD = M("WL PetFollow"),
-            DL = M("SmartManaPotion"),
+            DL = R("SmartManaPotion"),
             DR = S("Rain of Fire"),
         },
-        paddles = { M("WL Healthstone"), M("SmartHealthPotion"), M("WL Torment"), M("WL Sacrifice") },
+        paddles = { M("WL Healthstone"), R("SmartHealthPotion"), M("WL Torment"), M("WL Sacrifice") },
     },
     rt = {
         buttons = {
@@ -138,7 +140,7 @@ local LAYOUT = {
             DL = S("Eye of Kilrogg"),
             DU = S("Unending Breath"),
             DR = S("Sense Demons"),
-            DD = M("SmartQuestItem"),
+            DD = R("SmartQuestItem"),
         },
         paddles = { M("WL PetAbility"), M("WL PetCC"), M("WL PetPassive"),
             -- Forever renames or moves some curses; the first one known wins.
@@ -150,13 +152,13 @@ local LAYOUT = {
             Y = S("Create Soulstone (Lesser)", "Create Soulstone (Minor)"),
             B = S("Ritual of Summoning"),
             A = S("Banish"),
-            DU = M("SmartBandage"),
+            DU = R("SmartBandage"),
             DR = S("Enslave Demon"),
-            DD = M("SmartFood"),
-            DL = M("SmartFlask"),
+            DD = R("SmartFood"),
+            DL = R("SmartFlask"),
         },
         -- No Warlock mount before the level 30 cap, so P1 holds Hellfire (30).
-        paddles = { S("Hellfire"), I(6948, "Hearthstone"), M("SmartDrink"), M("WL UseSoulstn") },
+        paddles = { S("Hellfire"), I(6948, "Hearthstone"), R("SmartDrink"), M("WL UseSoulstn") },
     },
 }
 
@@ -231,6 +233,28 @@ local function GetCrossbarSlot(layer, buttonKey)
     return GamepadActionBarBindingUtil.GetGamepadStorageSlotIndexFromPageAndPageUnitSlotID(page, pageUnitSlotID)
 end
 
+local function IsAddOnLoaded(name)
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+        return C_AddOns.IsAddOnLoaded(name)
+    end
+    return _G.IsAddOnLoaded and _G.IsAddOnLoaded(name)
+end
+Grimoire.IsAddOnLoaded = IsAddOnLoaded
+
+-- An action that needs a sibling addon is left out while that addon is not
+-- loaded. Its slot is left as it is: old Smart macros from an uninstalled
+-- Rummage call Rummage and would error, and you may have put your own food
+-- or potions there.
+local function IsAvailable(action)
+    return not action.addon or IsAddOnLoaded(action.addon)
+end
+
+local function PrintUnavailable(count)
+    if count > 0 then
+        Print("Rummage is not loaded: the %d food, drink, potion, bandage, flask and quest item slots are left as they are.", count)
+    end
+end
+
 local function GetPaddleSlot(layer, paddle)
     local slots = BackhandCharDB and BackhandCharDB.nativeSlots
     if type(slots) ~= "table" then
@@ -239,8 +263,23 @@ local function GetPaddleSlot(layer, paddle)
     return slots[(BACKHAND_PANEL[layer] - 1) * 4 + paddle]
 end
 
+-- Backhand creates nativeSlots empty and fills all 16 only once it has
+-- reserved them; until then (or when it keeps a profile on its own saved
+-- actions) the paddles have no action slots to place into.
 local function HasPaddleSlots()
-    return type(BackhandCharDB) == "table" and type(BackhandCharDB.nativeSlots) == "table"
+    if not IsAddOnLoaded("Backhand") or type(BackhandCharDB) ~= "table" then
+        return false
+    end
+    local slots = BackhandCharDB.nativeSlots
+    if type(slots) ~= "table" or #slots ~= 16 then
+        return false
+    end
+    for _, slot in ipairs(slots) do
+        if type(slot) ~= "number" then
+            return false
+        end
+    end
+    return true
 end
 Grimoire.HasPaddleSlots = HasPaddleSlots
 
@@ -294,36 +333,47 @@ local function Place(slot, action)
     return true
 end
 
+-- Returns how many planned slots were left out because their addon is not
+-- loaded.
 local function ForEachEntry(func)
+    local unavailable = 0
+    local function Visit(layer, label, slot, action)
+        if not action then
+            return
+        elseif IsAvailable(action) then
+            func(layer, label, slot, action)
+        else
+            unavailable = unavailable + 1
+        end
+    end
     for _, layer in ipairs(LAYER_ORDER) do
         local layout = LAYOUT[layer]
         for _, key in ipairs(BUTTON_ORDER) do
             local action = layout.buttons[key]
             if action then
-                func(layer, BUTTON_LABEL[key], GetCrossbarSlot(layer, key), action)
+                Visit(layer, BUTTON_LABEL[key], GetCrossbarSlot(layer, key), action)
             end
         end
         -- Paddles need Backhand's reserved slots; without Backhand, or with
         -- paddles turned off in the settings, only the crossbar is filled.
         for paddle = 1, UsePaddles() and 4 or 0 do
-            local action = layout.paddles[paddle]
-            if action then
-                func(layer, "P" .. paddle, GetPaddleSlot(layer, paddle), action)
-            end
+            Visit(layer, "P" .. paddle, GetPaddleSlot(layer, paddle), layout.paddles[paddle])
         end
     end
+    return unavailable
 end
 
 local function Preview()
     Print("Planned layout (type /grimoire apply to place it):")
     local currentLayer
-    ForEachEntry(function(layer, label, slot, action)
+    local unavailable = ForEachEntry(function(layer, label, slot, action)
         if layer ~= currentLayer then
             currentLayer = layer
             print("|cffffd100" .. LAYER_LABEL[layer] .. "|r")
         end
         print(string.format("  %s: %s  (slot %s)", label, Describe(action), tostring(slot)))
     end)
+    PrintUnavailable(unavailable)
 end
 
 -- quiet (automatic apply after learning a spell) prints one summary line
@@ -340,14 +390,18 @@ local function Apply(quiet)
         return
     end
     if GrimoireDB.fillPaddles and not HasPaddleSlots() and not quiet then
-        Print("Backhand is not installed or has no paddle slots on this character; only the crossbar is filled.")
+        if IsAddOnLoaded("Backhand") then
+            Print("Backhand has no paddle slots on this character yet; only the crossbar is filled.")
+        else
+            Print("Backhand is not loaded; only the crossbar is filled.")
+        end
     end
     if not EnsureMacros() then
         return
     end
 
     local placed, skipped = 0, {}
-    ForEachEntry(function(layer, label, slot, action)
+    local unavailable = ForEachEntry(function(layer, label, slot, action)
         local where = LAYER_LABEL[layer] .. " " .. label
         if not slot or not C_GamepadUI.IsValidGamepadActionStorageSlotIndex(slot) then
             skipped[#skipped + 1] = where .. " (" .. Describe(action) .. "): no valid slot"
@@ -376,6 +430,7 @@ local function Apply(quiet)
     for _, line in ipairs(skipped) do
         print("  skipped " .. line)
     end
+    PrintUnavailable(unavailable)
     if #skipped > 0 then
         Print("Run /grimoire apply again after learning a spell or summoning that pet.")
     end
@@ -408,7 +463,7 @@ end
 
 local function Check()
     local matched, problems = 0, {}
-    ForEachEntry(function(layer, label, slot, action)
+    local unavailable = ForEachEntry(function(layer, label, slot, action)
         local where = LAYER_LABEL[layer] .. " " .. label
         if not slot then
             problems[#problems + 1] = where .. ": no slot"
@@ -426,6 +481,7 @@ local function Check()
     for _, line in ipairs(problems) do
         print("  " .. line)
     end
+    PrintUnavailable(unavailable)
     if #problems > 0 then
         Print("Spells you have not learned yet show up here too; /grimoire apply fills them once you have them.")
     end
