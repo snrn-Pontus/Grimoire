@@ -33,7 +33,20 @@ The idea: the base layer and its paddles hold the leveling loop (Corruption, Ban
 2. `/grimoire` prints the planned layout in chat, with the action slot of each button.
 3. `/grimoire apply` places it. Whatever was in those slots is replaced, and a slot whose spell you have not learned yet is emptied; nothing else is touched.
 4. `/grimoire check` compares every slot with the plan and lists the ones that differ.
-5. Spells you have not learned yet, and pet abilities, are listed as skipped. Run `/grimoire apply` again after leveling or learning a new demon. Slots with two spells take the first one you know, so they upgrade themselves.
+5. Spells you have not learned yet, and pet abilities, are listed as skipped. Run `/grimoire apply` again after leveling or learning a new demon, or turn on *Apply again after learning a spell* in the settings. Slots with two spells take the first one you know, so they upgrade themselves.
+
+## Settings
+
+Settings > AddOns > Grimoire, or `/grimoire config`. With a controller, use the mouse there: like the other SNRN addons, the page stays out of the gamepad cursor's reach because Forever freezes when Settings is closed after the cursor has been inside an addon page.
+
+The page has buttons for the plan, apply and check, shows whether Backhand's paddle slots and Rummage's Smart macros were found, and has these options:
+
+| Option | Default | Does |
+| --- | --- | --- |
+| Fill Backhand's paddles | On | Places the P1-P4 actions; off fills only the crossbar |
+| Empty slots for spells not learned yet | On | Clears a slot whose spell you do not know yet, so an older layout's action does not linger there |
+| Update the WL macros | On | Rewrites existing WL macros on every apply; off keeps your own edits |
+| Apply again after learning a spell | Off | Applies the layout a moment after you learn a spell, after combat if needed |
 
 ## Macros
 
@@ -63,6 +76,7 @@ Grimoire places actions the way the native crossbar's own edit mode does: it ask
 /grimoire          show the planned layout
 /grimoire apply    place it on the crossbar and paddles
 /grimoire check    compare every slot with the plan and list differences
+/grimoire config   open the settings
 /grimoire help     list the commands
 ```
 

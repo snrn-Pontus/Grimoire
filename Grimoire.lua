@@ -1,11 +1,43 @@
 -- Grimoire places an Affliction Warlock leveling layout (up to the level 30
 -- beta cap) on Forever's native gamepad crossbar and, when Backhand is
 -- installed, on its P1-P4 paddle slots. /grimoire prints the plan,
--- /grimoire apply places it.
+-- /grimoire apply places it. Settings.lua draws the options page.
+
+local ADDON_NAME, ns = ...
+
+local Grimoire = {}
+ns.core = Grimoire
 
 local function Print(fmt, ...)
     local msg = select("#", ...) > 0 and string.format(fmt, ...) or fmt
     print("|cff7fd8ffGrimoire|r: " .. msg)
+end
+
+--------------------------------------------------------------------------------
+-- Saved variables
+--------------------------------------------------------------------------------
+
+local DEFAULTS = {
+    fillPaddles = true,     -- with Backhand: fill its P1-P4 slots too
+    clearUnlearned = true,  -- empty a slot whose planned spell is not learned yet
+    updateMacros = true,    -- rewrite existing WL macros; off keeps your edits
+    autoApply = false,      -- apply again after learning a new spell
+}
+
+local function InitSavedVariables()
+    GrimoireDB = GrimoireDB or {}
+    for key, value in pairs(DEFAULTS) do
+        if GrimoireDB[key] == nil then
+            GrimoireDB[key] = value
+        end
+    end
+end
+
+function Grimoire.Set(key, value)
+    GrimoireDB[key] = value
+    if ns.settings and ns.settings.Refresh then
+        ns.settings.Refresh()
+    end
 end
 
 -- Crossbar bar order (GamepadActionBarPageUnit pageableActionBarsIndexOrder):
@@ -210,13 +242,20 @@ end
 local function HasPaddleSlots()
     return type(BackhandCharDB) == "table" and type(BackhandCharDB.nativeSlots) == "table"
 end
+Grimoire.HasPaddleSlots = HasPaddleSlots
+
+local function UsePaddles()
+    return GrimoireDB.fillPaddles and HasPaddleSlots()
+end
 
 local function EnsureMacros()
     local missing = {}
     for name in pairs(MACROS) do
         local index = GetMacroIndexByName(name)
         if index and index > 0 then
-            EditMacro(index, name, ResolveIcon(name), MACROS[name])
+            if GrimoireDB.updateMacros then
+                EditMacro(index, name, ResolveIcon(name), MACROS[name])
+            end
         else
             missing[#missing + 1] = name
         end
@@ -264,9 +303,9 @@ local function ForEachEntry(func)
                 func(layer, BUTTON_LABEL[key], GetCrossbarSlot(layer, key), action)
             end
         end
-        -- Paddles need Backhand's reserved slots; without Backhand only the
-        -- crossbar is filled.
-        for paddle = 1, HasPaddleSlots() and 4 or 0 do
+        -- Paddles need Backhand's reserved slots; without Backhand, or with
+        -- paddles turned off in the settings, only the crossbar is filled.
+        for paddle = 1, UsePaddles() and 4 or 0 do
             local action = layout.paddles[paddle]
             if action then
                 func(layer, "P" .. paddle, GetPaddleSlot(layer, paddle), action)
@@ -287,16 +326,20 @@ local function Preview()
     end)
 end
 
-local function Apply()
+-- quiet (automatic apply after learning a spell) prints one summary line
+-- instead of the list of skipped slots.
+local function Apply(quiet)
     if InCombatLockdown() then
         Print("Cannot change action slots in combat.")
         return
     end
     if not GamepadActionBarBindingUtil then
-        Print("The native gamepad crossbar is not loaded. Switch to gamepad mode first.")
+        if not quiet then
+            Print("The native gamepad crossbar is not loaded. Switch to gamepad mode first.")
+        end
         return
     end
-    if not HasPaddleSlots() then
+    if GrimoireDB.fillPaddles and not HasPaddleSlots() and not quiet then
         Print("Backhand is not installed or has no paddle slots on this character; only the crossbar is filled.")
     end
     if not EnsureMacros() then
@@ -316,7 +359,7 @@ local function Apply()
         else
             -- Clear the slot so an action from an older layout does not stay
             -- behind looking like part of this one.
-            if C_ActionBar.HasAction(slot) then
+            if GrimoireDB.clearUnlearned and C_ActionBar.HasAction(slot) then
                 PickupAction(slot)
                 ClearCursor()
                 reason = reason .. ", old action cleared"
@@ -325,6 +368,10 @@ local function Apply()
         end
     end)
 
+    if quiet then
+        Print("Learned a new spell; layout applied again (%d actions placed).", placed)
+        return
+    end
     Print("Placed %d actions.", placed)
     for _, line in ipairs(skipped) do
         print("  skipped " .. line)
@@ -384,11 +431,16 @@ local function Check()
     end
 end
 
+Grimoire.Preview = Preview
+Grimoire.Apply = Apply
+Grimoire.Check = Check
+
 local function PrintHelp()
     Print("Commands:")
     print("  /grimoire          show the planned layout")
     print("  /grimoire apply    place it on the crossbar and paddles")
     print("  /grimoire check    compare every slot with the plan")
+    print("  /grimoire config   open the settings")
     print("  /grimoire help     this list")
 end
 
@@ -400,9 +452,55 @@ SlashCmdList.GRIMOIRE = function(msg)
         Apply()
     elseif msg == "check" then
         Check()
+    elseif msg == "config" or msg == "options" or msg == "settings" then
+        if ns.settings and ns.settings.Open then
+            ns.settings.Open()
+        end
     elseif msg == "help" then
         PrintHelp()
     else
         Preview()
     end
 end
+
+--------------------------------------------------------------------------------
+-- Events
+--------------------------------------------------------------------------------
+
+-- A trainer visit teaches several spells in a row, and in combat nothing can
+-- be placed, so learning a spell only marks the layout as due.
+local applyPending = false
+
+local function ApplyIfPending()
+    if not applyPending or InCombatLockdown() then
+        return
+    end
+    applyPending = false
+    Apply(true)
+end
+
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("ADDON_LOADED")
+frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+pcall(frame.RegisterEvent, frame, "LEARNED_SPELL_IN_SKILL_LINE")
+pcall(frame.RegisterEvent, frame, "LEARNED_SPELL_IN_TAB")
+
+frame:SetScript("OnEvent", function(_, event, arg1)
+    if event == "ADDON_LOADED" then
+        if arg1 == ADDON_NAME then
+            InitSavedVariables()
+        end
+    elseif event == "PLAYER_LOGIN" then
+        if ns.settings and ns.settings.Register then
+            ns.settings.Register()
+        end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        ApplyIfPending()
+    elseif GrimoireDB and GrimoireDB.autoApply and select(2, UnitClass("player")) == "WARLOCK" then
+        if not applyPending then
+            applyPending = true
+            C_Timer.After(1, ApplyIfPending)
+        end
+    end
+end)

@@ -10,5 +10,7 @@
 ## Category: SNRN
 ## Group: SNRN
 ## OptionalDeps: Backhand, Rummage
+## SavedVariables: GrimoireDB
 
 Grimoire.lua
+Settings.lua
