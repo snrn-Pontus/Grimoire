@@ -1,5 +1,12 @@
 # Grimoire changelog
 
+## 0.3.0 — Racials and report
+
+- **Action bar page warning.** The crossbar fires each slot shifted by 12 for every action bar page past the first, so on page 2 the layout looks moved by one bar and RT's face buttons show as empty. The plan, apply and check now say so when the page is not 1, and the report shows the page and the slot each button really fires.
+- **`/grimoire report`** opens a window with every slot (planned, current, OK or DIFF), the spell ID the client finds for each planned name, the WL macros, the action bar page, the slot each of the client's crossbar buttons fires and where it is drawn, the controller bindings of those buttons, the last 24 crossbar button presses and the output of the last command, as text you can select and copy. Also on the settings page as *Copy report*.
+- **Racials.** The damage cooldown (Blood Fury, Berserking, Eureka!) goes on RT D-Left in place of Eye of Kilrogg, and the heal between pulls (Cannibalize, Rapid Regeneration) on LT + RT D-Right in place of Enslave Demon. A race without one keeps the old spell there. The crowd control breaks and Perception are left out.
+- Fixed: Create Healthstone and Create Soulstone on LT + RT X and Y were never found. Forever names them without the stone in brackets ("Create Healthstone", Rank 1); Grimoire now looks for that name first and falls back to the Classic names.
+
 ## 0.2.0 — Settings and check
 
 - **Settings page.** Settings > AddOns > Grimoire, or `/grimoire config`: buttons to show, apply and check the layout, and options to skip Backhand's paddles, leave slots for unlearned spells alone, keep your own edits to the WL macros, and apply the layout again automatically after learning a spell. With a controller, use the mouse on the page, as in the other SNRN addons.

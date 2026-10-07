@@ -75,7 +75,7 @@
     </g>
     <text x="65" y="915" class="section">D-PAD</text>
     <text x="65" y="940" class="small">↑ Unending Breath   •   → Sense Demons</text>
-    <text x="65" y="964" class="small">↓ SmartQuestItem   •   ← Eye of Kilrogg</text>
+    <text x="65" y="964" class="small">↓ SmartQuestItem   •   ← Racial damage CD</text>
     <text x="65" y="994" class="section">BACK PADDLES</text>
     <text x="65" y="1018" class="small">P1 WL PetAbility   •   P2 WL PetCC   •   P3 WL PetPassive</text>
     <text x="65" y="1042" class="small">P4 Recklessness → Tongues → Exhaustion → Drain Mana</text>
@@ -88,13 +88,13 @@
     <text x="1125" y="681" class="sh">Hold both triggers — utility / out of combat</text>
     <text x="1125" y="719" class="section">FACE BUTTONS</text>
     <g transform="translate(1125,730)">
-      <rect width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="17" class="key">X</text><text x="58" y="23" class="row">Create Healthstone</text><text x="270" y="23" class="small">Lesser → Minor</text>
-      <rect y="44" width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="61" class="key">Y</text><text x="58" y="67" class="row">Create Soulstone</text><text x="260" y="67" class="small">Lesser → Minor</text>
+      <rect width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="17" class="key">X</text><text x="58" y="23" class="row">Create Healthstone</text><text x="270" y="23" class="small">highest rank</text>
+      <rect y="44" width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="61" class="key">Y</text><text x="58" y="67" class="row">Create Soulstone</text><text x="260" y="67" class="small">highest rank</text>
       <rect y="88" width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="105" class="key">B</text><text x="58" y="111" class="row">Ritual of Summoning</text>
       <rect y="132" width="42" height="34" rx="17" fill="#3b3011"/><text x="21" y="149" class="key">A</text><text x="58" y="155" class="row">Banish</text>
     </g>
     <text x="1125" y="915" class="section">D-PAD</text>
-    <text x="1125" y="940" class="small">↑ SmartBandage   •   → Enslave Demon</text>
+    <text x="1125" y="940" class="small">↑ SmartBandage   •   → Racial heal</text>
     <text x="1125" y="964" class="small">↓ SmartFood   •   ← SmartFlask</text>
     <text x="1125" y="994" class="section">BACK PADDLES</text>
     <text x="1125" y="1018" class="small">P1 Hellfire   •   P2 Hearthstone</text>

@@ -8,9 +8,24 @@ local ADDON_NAME, ns = ...
 local Grimoire = {}
 ns.core = Grimoire
 
+-- Everything a command prints is also kept, so /grimoire report can show
+-- it as text you can copy; the chat window cannot be copied from.
+local output = {}
+Grimoire.output = output
+
+local function Out(text)
+    print(text)
+    output[#output + 1] = text
+end
+
+local function BeginOutput(command)
+    wipe(output)
+    output.command = command
+end
+
 local function Print(fmt, ...)
     local msg = select("#", ...) > 0 and string.format(fmt, ...) or fmt
-    print("|cff7fd8ffGrimoire|r: " .. msg)
+    Out("|cff7fd8ffGrimoire|r: " .. msg)
 end
 
 --------------------------------------------------------------------------------
@@ -137,7 +152,8 @@ local LAYOUT = {
             Y = S("Summon Felhunter", "Summon Imp"),
             B = S("Summon Succubus"),
             A = S("Demon Armor", "Demon Skin"),
-            DL = S("Eye of Kilrogg"),
+            -- Racial damage cooldown; Humans and Undead keep Eye of Kilrogg.
+            DL = S("Blood Fury", "Berserking", "Eureka!", "Eye of Kilrogg"),
             DU = S("Unending Breath"),
             DR = S("Sense Demons"),
             DD = R("SmartQuestItem"),
@@ -148,12 +164,16 @@ local LAYOUT = {
     },
     both = {
         buttons = {
-            X = S("Create Healthstone (Lesser)", "Create Healthstone (Minor)"),
-            Y = S("Create Soulstone (Lesser)", "Create Soulstone (Minor)"),
+            -- Forever lists these by rank under one name; the Classic names
+            -- with the stone in brackets are kept as fallbacks.
+            X = S("Create Healthstone", "Create Healthstone (Lesser)", "Create Healthstone (Minor)"),
+            Y = S("Create Soulstone", "Create Soulstone (Lesser)", "Create Soulstone (Minor)"),
             B = S("Ritual of Summoning"),
             A = S("Banish"),
             DU = R("SmartBandage"),
-            DR = S("Enslave Demon"),
+            -- Racial heal between pulls (cancelled by moving or acting); the
+            -- other races keep Enslave Demon.
+            DR = S("Cannibalize", "Rapid Regeneration", "Enslave Demon"),
             DD = R("SmartFood"),
             DL = R("SmartFlask"),
         },
@@ -231,6 +251,22 @@ local function GetCrossbarSlot(layer, buttonKey)
     end
     local pageUnitSlotID = BAR[layer] * 8 + BUTTON[buttonKey]
     return GamepadActionBarBindingUtil.GetGamepadStorageSlotIndexFromPageAndPageUnitSlotID(page, pageUnitSlotID)
+end
+
+-- A crossbar button fires its slot plus 12 for every action bar page past
+-- the first (SecureActionButtonMixin:CalculateAction), so the layout only
+-- shows up where planned on page 1.
+local function GetActionBarPage()
+    local get = (C_ActionBar and C_ActionBar.GetActionBarPage) or GetActionBarPage
+    return get and get() or 1
+end
+Grimoire.GetActionBarPage = GetActionBarPage
+
+local function WarnActionBarPage()
+    local page = GetActionBarPage()
+    if page ~= 1 then
+        Print("The action bar is on page %d, so every crossbar button fires the slot %d further on and the layout looks shifted or empty. Switch back to page 1 (Shift+1, or /run ChangeActionBarPage(1)).", page, (page - 1) * 12)
+    end
 end
 
 local function IsAddOnLoaded(name)
@@ -364,14 +400,16 @@ local function ForEachEntry(func)
 end
 
 local function Preview()
+    BeginOutput("/grimoire")
     Print("Planned layout (type /grimoire apply to place it):")
+    WarnActionBarPage()
     local currentLayer
     local unavailable = ForEachEntry(function(layer, label, slot, action)
         if layer ~= currentLayer then
             currentLayer = layer
-            print("|cffffd100" .. LAYER_LABEL[layer] .. "|r")
+            Out("|cffffd100" .. LAYER_LABEL[layer] .. "|r")
         end
-        print(string.format("  %s: %s  (slot %s)", label, Describe(action), tostring(slot)))
+        Out(string.format("  %s: %s  (slot %s)", label, Describe(action), tostring(slot)))
     end)
     PrintUnavailable(unavailable)
 end
@@ -379,6 +417,7 @@ end
 -- quiet (automatic apply after learning a spell) prints one summary line
 -- instead of the list of skipped slots.
 local function Apply(quiet)
+    BeginOutput(quiet and "automatic apply" or "/grimoire apply")
     if InCombatLockdown() then
         Print("Cannot change action slots in combat.")
         return
@@ -427,8 +466,9 @@ local function Apply(quiet)
         return
     end
     Print("Placed %d actions.", placed)
+    WarnActionBarPage()
     for _, line in ipairs(skipped) do
-        print("  skipped " .. line)
+        Out("  skipped " .. line)
     end
     PrintUnavailable(unavailable)
     if #skipped > 0 then
@@ -462,6 +502,7 @@ local function DescribeSlot(slot, action)
 end
 
 local function Check()
+    BeginOutput("/grimoire check")
     local matched, problems = 0, {}
     local unavailable = ForEachEntry(function(layer, label, slot, action)
         local where = LAYER_LABEL[layer] .. " " .. label
@@ -478,8 +519,9 @@ local function Check()
     end)
 
     Print("%d slots match the plan.", matched)
+    WarnActionBarPage()
     for _, line in ipairs(problems) do
-        print("  " .. line)
+        Out("  " .. line)
     end
     PrintUnavailable(unavailable)
     if #problems > 0 then
@@ -491,11 +533,22 @@ Grimoire.Preview = Preview
 Grimoire.Apply = Apply
 Grimoire.Check = Check
 
+-- For the report in Report.lua.
+Grimoire.Print = Print
+Grimoire.ForEachEntry = ForEachEntry
+Grimoire.Describe = Describe
+Grimoire.DescribeSlot = DescribeSlot
+Grimoire.GetSpellID = GetSpellID
+Grimoire.UsePaddles = UsePaddles
+Grimoire.MACROS = MACROS
+Grimoire.LAYER_LABEL = LAYER_LABEL
+
 local function PrintHelp()
     Print("Commands:")
     print("  /grimoire          show the planned layout")
     print("  /grimoire apply    place it on the crossbar and paddles")
     print("  /grimoire check    compare every slot with the plan")
+    print("  /grimoire report   open a copyable report of every slot and the last command")
     print("  /grimoire config   open the settings")
     print("  /grimoire help     this list")
 end
@@ -508,6 +561,10 @@ SlashCmdList.GRIMOIRE = function(msg)
         Apply()
     elseif msg == "check" then
         Check()
+    elseif msg == "report" or msg == "diag" or msg == "copy" then
+        if ns.report and ns.report.Show then
+            ns.report.Show()
+        end
     elseif msg == "config" or msg == "options" or msg == "settings" then
         if ns.settings and ns.settings.Open then
             ns.settings.Open()

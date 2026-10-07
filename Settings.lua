@@ -120,7 +120,7 @@ function ns.settings.Register()
     note:SetPoint("TOPLEFT", 6, y)
     note:SetWidth(540)
     note:SetJustifyH("LEFT")
-    note:SetText("Lays out an Affliction Warlock on the gamepad crossbar and, with Backhand, its paddles. The buttons below do the same as /grimoire, /grimoire apply and /grimoire check; the results are printed in chat. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
+    note:SetText("Lays out an Affliction Warlock on the gamepad crossbar and, with Backhand, its paddles. The buttons below do the same as /grimoire, /grimoire apply, /grimoire check and /grimoire report; the first three print in chat, the report opens as text you can copy. With a controller, use the mouse on this page: the gamepad cursor cannot enter it without freezing Forever when Settings is closed.")
     y = y - (note:GetStringHeight() + 12)
 
     local status = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -135,11 +135,12 @@ function ns.settings.Register()
         { text = "Show plan", func = Grimoire.Preview, tooltip = "Prints every planned slot in chat, with its action slot number." },
         { text = "Apply layout", func = Grimoire.Apply, tooltip = "Places the layout on the crossbar and paddles. Whatever was in those slots is replaced." },
         { text = "Check slots", func = Grimoire.Check, tooltip = "Compares every slot with the plan and lists the ones that differ." },
+        { text = "Copy report", func = ns.report.Show, tooltip = "Opens every slot, the spell lookups behind it and the last command's output as text you can select and copy (Ctrl+C). Same as /grimoire report." },
     }
     local previous
     for _, info in ipairs(buttons) do
         local button = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
-        button:SetSize(140, 24)
+        button:SetSize(126, 24)
         if previous then
             button:SetPoint("LEFT", previous, "RIGHT", 8, 0)
         else

@@ -6,6 +6,7 @@ Dragging thirty-odd spells, items and macros onto four trigger layers with a con
 
 ## What's new
 
+- **0.3.0**: Racials get a slot: the damage cooldown (Blood Fury, Berserking, Eureka!) on RT D-Left and the heal between pulls (Cannibalize, Rapid Regeneration) on LT + RT D-Right. Create Healthstone and Create Soulstone are found again. `/grimoire report` opens everything as text you can copy into a bug report, and Grimoire warns when the action bar is not on page 1, which shifts the whole crossbar.
 - **0.2.0**: A settings page (`/grimoire config`) and `/grimoire check`, which lists every slot that differs from the plan. Grimoire now works with or without Backhand and Rummage, using each only while it is loaded. Bane of Agony is no longer skipped, and slots for spells you have not learned yet are cleared instead of keeping an older layout's action.
 - **0.1.0**: First release.
 
@@ -22,15 +23,26 @@ Shown for an Xbox controller: X is the left face button, Y the top, B the right,
 | **P3** | Drain Life | Torment | Pet Passive | SmartDrink |
 | **P4** | Life Tap | Sacrifice | Curse of Recklessness, or Tongues, Exhaustion or Drain Mana | Use Soulstone |
 | **D-Up** | Drain Soul | Pet Attack | Unending Breath | SmartBandage |
-| **D-Right** | Fear | Rain of Fire | Sense Demons | Enslave Demon |
+| **D-Right** | Fear | Rain of Fire | Sense Demons | Cannibalize or Rapid Regeneration, or Enslave Demon |
 | **D-Down** | Shoot (wand) | Pet Follow | SmartQuestItem | SmartFood |
-| **D-Left** | Shadow Bolt | SmartManaPotion | Eye of Kilrogg | SmartFlask |
+| **D-Left** | Shadow Bolt | SmartManaPotion | Racial damage cooldown, or Eye of Kilrogg | SmartFlask |
 | **X** | *(client)* | Siphon Life, Searing Pain until then | Summon Voidwalker | Create Healthstone |
 | **Y** | *(client)* | Health Funnel | Summon Felhunter, Imp until then | Create Soulstone |
 | **B** | *(client)* | Curse of Weakness | Summon Succubus | Ritual of Summoning |
 | **A** | *(client: jump)* | Immolate | Demon Armor, Demon Skin until then | Banish |
 
 The base layer and its paddles hold the leveling loop (Corruption, Bane of Agony, Drain Life or the wand, Drain Soul on low mobs, Life Tap between pulls). LT is survival, RT is the pet and LT + RT is everything you do out of combat. Shadow Bolt stays on the base layer for Nightfall procs.
+
+## Racials
+
+Only the racials worth pressing while leveling get a slot, and they take the place of a spell you rarely need:
+
+| Slot | Racial | Others keep |
+| --- | --- | --- |
+| RT D-Left | Blood Fury (Orc), Berserking (Troll), Eureka! (Gnome): damage cooldown for the pull | Eye of Kilrogg |
+| LT + RT D-Right | Cannibalize (Undead, needs a Humanoid or Undead corpse), Rapid Regeneration (Troll, cancelled by moving, acting or damage): heal between pulls | Enslave Demon |
+
+The breaks (Will of the Forsaken, Will to Survive, Shatter Curse, Escape Artist) and the Human's Perception are left out: they are answers to PvP crowd control and stealth that leveling rarely calls for. Cast them from the spellbook.
 
 ## Setup in one step
 
@@ -69,6 +81,7 @@ Grimoire places actions the way the crossbar's own edit mode does, so the layout
 /grimoire          show the planned layout
 /grimoire apply    place it on the crossbar and paddles
 /grimoire check    compare every slot with the plan and list differences
+/grimoire report   open a copyable report for bug reports
 /grimoire config   open the settings
 /grimoire help     list the commands
 ```
@@ -88,4 +101,4 @@ Grimoire places actions the way the crossbar's own edit mode does, so the layout
 
 ## Reporting problems
 
-Run `/grimoire check` and include the output with your report, plus your level and which SNRN addons you have installed.
+Run `/grimoire apply`, then `/grimoire report`, click Select All, press Ctrl+C and paste the report into your message. It already includes your level, race and which SNRN addons are loaded.
