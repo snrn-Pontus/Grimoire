@@ -62,7 +62,7 @@ Grimoire creates ten per-character macros starting with `WL` and updates them in
 
 ## Settings
 
-**Settings > AddOns > Grimoire** (or `/grimoire config`): buttons for the plan, apply and check, which SNRN addons were found, and these options:
+**Settings > AddOns > Grimoire** (or `/grimoire config`): buttons for the plan, apply, check and the copyable report, which SNRN addons were found, and these options:
 
 - Fill Backhand's paddles
 - Empty slots for spells not learned yet
